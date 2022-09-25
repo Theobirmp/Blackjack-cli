@@ -79,27 +79,27 @@ const cardsSlice= createSlice({
             state.playerCards=[]
             state.dealerCards=[]
         },
-        showPlayerCards:(state)=>{
-            console.log('Your Cards')
-            let output=''
-            state.playerCards?.forEach(card=>{
-                output+=`${card.number}${card.emoji} `
-            })
-            console.log(output)
-        },
+        // showPlayerCards:(state)=>{
+        //     console.log('Your Cards')
+        //     let output=''
+        //     state.playerCards?.forEach(card=>{
+        //         output+=`${card.number}${card.emoji} `
+        //     })
+        //     console.log(output)
+        // },
         showDealerCardsStart:(state)=>{
             console.log('Dealer Cards')
             let output=`${state.dealerCards[0].number}${state.dealerCards[0].emoji} x?`
             console.log(output)
         },
-        showDealerCards:(state)=>{
-            console.log('Dealer Cards')
-            let output=''
-            state.dealerCards?.forEach(card=>{
-                output+=`${card.number}${card.emoji} `
-            })
-            console.log(output)
-        },
+        // showDealerCards:(state)=>{
+        //     console.log('Dealer Cards')
+        //     let output=''
+        //     state.dealerCards?.forEach(card=>{
+        //         output+=`${card.number}${card.emoji} `
+        //     })
+        //     console.log(output)
+        // },
         getPlayerPoints:(state)=>{
             state.playerPoints=state.playerCards.reduce((points,item)=>{
                 return points=points+item.value

@@ -2,18 +2,25 @@
 const store = require('./app/store')
 //all actions
 const cardsActions=require('./features/cardsSlice').actions
-const playerCardsActions=require('./features/playerCardsSlice').actions
-const dealerCardsActions=require('./features/dealerCardsSlice').actions
 const inquirer=require("inquirer")
 const gameEndStates=require('./features/data/gameEndStates')
+
 const sleep=require('./helpers/sleep')
 const randomChance=require('./helpers/randomChance')
 
 const game=async()=>{
     startGame()
     const dealerPlays=await doesPlayerDrawCard()
-    if(dealerPlays) await doesDealerDrawCard()
-    if(dealerPlays)checkWinner()
+    showDealerCards()
+    if(!dealerPlays) return
+    const checkWin = await doesDealerDrawCard()
+    if(!checkWin) return
+    checkWinner()
+
+    // if(dealerPlays) {
+    //     const checkWin = 
+    //     if(checkWin) checkWinner()
+    // }
 }
 const startGame=()=>{
     store.dispatch(cardsActions.pickACard())
@@ -24,8 +31,10 @@ const startGame=()=>{
     store.dispatch(cardsActions.dealerDrawCard())
     store.dispatch(cardsActions.pickACard())
     store.dispatch(cardsActions.dealerDrawCard())
-    store.dispatch(cardsActions.showPlayerCards())
-    store.dispatch(cardsActions.showDealerCardsStart())
+    store.dispatch(cardsActions.getPlayerPoints())
+    store.dispatch(cardsActions.getDealerPoints())
+    showPlayerCards()
+    showDealerCardsStart()
 }
 const endGame=(action)=>{
     switch(action){
@@ -50,13 +59,11 @@ const playerDrewCard=()=>{
     store.dispatch(cardsActions.pickACard())
     store.dispatch(cardsActions.playerDrawCard())
     store.dispatch(cardsActions.getPlayerPoints())
-    store.dispatch(cardsActions.showPlayerCards())
-    store.dispatch(cardsActions.showDealerCards())
+    showPlayerCards()
+    showDealerCardsStart()
 }
 const hasPlayerBurnt=()=>{
     const {cardsReducer:{playerPoints}}=store.getState()
-    console.log(playerPoints)
-    console.log('player points are:',playerPoints)
     if(playerPoints>21){
         endGame(gameEndStates.PLAYER_BURNT)
         return true
@@ -66,8 +73,8 @@ const hasPlayerBurnt=()=>{
 }
 const dealerHasBurnt=()=>{
     const {cardsReducer:{dealerPoints}}=store.getState()
-    console.log(dealerPoints)
-    console.log('player points are:',dealerPoints)
+    // console.log(dealerPoints)
+    // console.log('player points are:',dealerPoints)
     if(dealerPoints>21){
         endGame(gameEndStates.DEALER_BURNT)
         return true
@@ -81,7 +88,7 @@ const doesPlayerDrawCard=async()=>{
         await inquirer.prompt([
             {
                 type:'list',
-                message:'Do you want to draw another card?',
+                message:'Draw Card',
                 name:"drawCard",
                 choices:['yes','no']
             }
@@ -111,10 +118,8 @@ const doesPlayerDrawCard=async()=>{
 }
 //checks if the dealer wants to draw a card
 const dealerThinks=async()=>{
-    store.dispatch(cardsActions.showDealerCards())
     store.dispatch(cardsActions.getDealerPoints())
     const {cardsReducer:{dealerPoints}} = store.getState()
-    console.log('dealer points are: ',dealerPoints)
     console.log('Dealer Thinking...')
     await sleep(2000)
     switch (dealerPoints) {
@@ -144,11 +149,14 @@ const doesDealerDrawCard=async()=>{
         console.log('Dealer Draws')
         store.dispatch(cardsActions.pickACard())
         store.dispatch(cardsActions.dealerDrawCard())
-        store.dispatch(cardsActions.showDealerCards())
-        if(dealerHasBurnt())return
+        showDealerCards()
+        if(dealerHasBurnt())return false
         con=await dealerThinks()
     }
     console.log('I dont want to draw more cards')
+    showPlayerCards()
+    showDealerCards()
+    return true
 }
 const checkWinner=()=>{
     const {cardsReducer:{playerPoints}}=store.getState()
@@ -156,6 +164,38 @@ const checkWinner=()=>{
     if(playerPoints>dealerPoints) endGame(gameEndStates.PLAYER_WINS)
     if(playerPoints<dealerPoints) endGame(gameEndStates.DEALER_WINS)
     if(playerPoints===dealerPoints) endGame(gameEndStates.DRAW)
+}
+const showPlayerCards=()=>{
+    const {cardsReducer:{playerCards}}=store.getState()
+    let totalPoints=playerCards.reduce((points,item)=>{
+        return points=points+item.value
+    },0)
+    let output='You: ' 
+    playerCards.forEach(card=>{
+        output+=`${card.number}${card.emoji} `
+    })
+    output+='==> ' + totalPoints
+    console.log(output)
+}
+const showDealerCards=()=>{
+    const {cardsReducer:{dealerCards}}=store.getState()
+    let totalPoints=dealerCards.reduce((points,item)=>{
+       return points=points+item.value
+    },0)
+    let output='Dealer: ' 
+    dealerCards.forEach(card=>{
+        output+=`${card.number}${card.emoji} `
+    })
+    output+='==> ' + totalPoints
+    console.log(output)
+}
+const showDealerCardsStart=()=>{
+    const {cardsReducer:{dealerCards}}=store.getState()
+    let totalPoints=dealerCards.reduce((points,item)=>{
+       return points=points+item.value
+    },0)
+    let output=`Dealer: ${dealerCards[0].number}${dealerCards[0].emoji} x? ==> ${dealerCards[0].value}`
+    console.log(output)
 }
 module.exports = game
 module.exports.startGame=startGame
