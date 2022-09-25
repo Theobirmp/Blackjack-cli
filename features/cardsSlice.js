@@ -5,52 +5,54 @@ const emojis = require('./data/emojis')
  const initialState={
     cards:[
         //spades
-        {number:1,sign:'spades',emoji:emojis.spades},
-        {number:2,sign:'spades',emoji:emojis.spades},
-        {number:3,sign:'spades',emoji:emojis.spades},
-        {number:4,sign:'spades',emoji:emojis.spades},
-        {number:5,sign:'spades',emoji:emojis.spades},
-        {number:6,sign:'spades',emoji:emojis.spades},
-        {number:7,sign:'spades',emoji:emojis.spades},
-        {number:8,sign:'spades',emoji:emojis.spades},
-        {number:9,sign:'spades',emoji:emojis.spades},
-        {number:10,sign:'spades',emoji:emojis.spades},
+        {number:1,sign:'spades',emoji:emojis.spades,value:1},
+        {number:2,sign:'spades',emoji:emojis.spades,value:2},
+        {number:3,sign:'spades',emoji:emojis.spades,value:3},
+        {number:4,sign:'spades',emoji:emojis.spades,value:4},
+        {number:5,sign:'spades',emoji:emojis.spades,value:5},
+        {number:6,sign:'spades',emoji:emojis.spades,value:6},
+        {number:7,sign:'spades',emoji:emojis.spades,value:7},
+        {number:8,sign:'spades',emoji:emojis.spades,value:8},
+        {number:9,sign:'spades',emoji:emojis.spades,value:9},
+        {number:10,sign:'spades',emoji:emojis.spades,value:10},
         //hearts
-        {number:1,sign:'hearts',emoji:emojis.hearts},
-        {number:2,sign:'hearts',emoji:emojis.hearts},
-        {number:3,sign:'hearts',emoji:emojis.hearts},
-        {number:4,sign:'hearts',emoji:emojis.hearts},
-        {number:5,sign:'hearts',emoji:emojis.hearts},
-        {number:6,sign:'hearts',emoji:emojis.hearts},
-        {number:7,sign:'hearts',emoji:emojis.hearts},
-        {number:8,sign:'hearts',emoji:emojis.hearts},
-        {number:9,sign:'hearts',emoji:emojis.hearts},
-        {number:10,sign:'hearts',emoji:emojis.hearts},
+        {number:1,sign:'hearts',emoji:emojis.hearts,value:1},
+        {number:2,sign:'hearts',emoji:emojis.hearts,value:2},
+        {number:3,sign:'hearts',emoji:emojis.hearts,value:3},
+        {number:4,sign:'hearts',emoji:emojis.hearts,value:4},
+        {number:5,sign:'hearts',emoji:emojis.hearts,value:5},
+        {number:6,sign:'hearts',emoji:emojis.hearts,value:6},
+        {number:7,sign:'hearts',emoji:emojis.hearts,value:7},
+        {number:8,sign:'hearts',emoji:emojis.hearts,value:8},
+        {number:9,sign:'hearts',emoji:emojis.hearts,value:9},
+        {number:10,sign:'hearts',emoji:emojis.hearts,value:10},
         //clubs
-        {number:1,sign:'clubs',emoji:emojis.hearts},
-        {number:2,sign:'clubs',emoji:emojis.hearts},
-        {number:3,sign:'clubs',emoji:emojis.hearts},
-        {number:4,sign:'clubs',emoji:emojis.clubs},
-        {number:5,sign:'clubs',emoji:emojis.clubs},
-        {number:6,sign:'clubs',emoji:emojis.clubs},
-        {number:7,sign:'clubs',emoji:emojis.clubs},
-        {number:8,sign:'clubs',emoji:emojis.clubs},
-        {number:9,sign:'clubs',emoji:emojis.clubs},
-        {number:10,sign:'clubs',emoji:emojis.clubs},
+        {number:1,sign:'clubs',emoji:emojis.clubs,value:1},
+        {number:2,sign:'clubs',emoji:emojis.clubs,value:2},
+        {number:3,sign:'clubs',emoji:emojis.clubs,value:3},
+        {number:4,sign:'clubs',emoji:emojis.clubs,value:4},
+        {number:5,sign:'clubs',emoji:emojis.clubs,value:5},
+        {number:6,sign:'clubs',emoji:emojis.clubs,value:6},
+        {number:7,sign:'clubs',emoji:emojis.clubs,value:7},
+        {number:8,sign:'clubs',emoji:emojis.clubs,value:8},
+        {number:9,sign:'clubs',emoji:emojis.clubs,value:9},
+        {number:10,sign:'clubs',emoji:emojis.clubs,value:10},
         //diamonds
-        {number:1,sign:'diamonds',emoji:emojis.diamonds},
-        {number:2,sign:'diamonds',emoji:emojis.diamonds},
-        {number:3,sign:'diamonds',emoji:emojis.diamonds},
-        {number:4,sign:'diamonds',emoji:emojis.diamonds},
-        {number:5,sign:'diamonds',emoji:emojis.diamonds},
-        {number:6,sign:'diamonds',emoji:emojis.diamonds},
-        {number:7,sign:'diamonds',emoji:emojis.diamonds},
-        {number:8,sign:'diamonds',emoji:emojis.diamonds},
-        {number:9,sign:'diamonds',emoji:emojis.diamonds},
-        {number:10,sign:'diamonds',emoji:emojis.diamonds},
+        {number:1,sign:'diamonds',emoji:emojis.diamonds,value:1},
+        {number:2,sign:'diamonds',emoji:emojis.diamonds,value:2},
+        {number:3,sign:'diamonds',emoji:emojis.diamonds,value:3},
+        {number:4,sign:'diamonds',emoji:emojis.diamonds,value:4},
+        {number:5,sign:'diamonds',emoji:emojis.diamonds,value:5},
+        {number:6,sign:'diamonds',emoji:emojis.diamonds,value:6},
+        {number:7,sign:'diamonds',emoji:emojis.diamonds,value:7},
+        {number:8,sign:'diamonds',emoji:emojis.diamonds,value:8},
+        {number:9,sign:'diamonds',emoji:emojis.diamonds,value:9},
+        {number:10,sign:'diamonds',emoji:emojis.diamonds,value:10},
     ],
     playerCards:[],
     dealerCards:[],
+    playerPoints:0,
+    dealerPoints:0,
     selectedCard:null,
 }
 
@@ -76,6 +78,37 @@ const cardsSlice= createSlice({
             state.cards=[...initialState.cards]
             state.playerCards=[]
             state.dealerCards=[]
+        },
+        showPlayerCards:(state)=>{
+            console.log('Your Cards')
+            let output=''
+            state.playerCards?.forEach(card=>{
+                output+=`${card.number}${card.emoji} `
+            })
+            console.log(output)
+        },
+        showDealerCardsStart:(state)=>{
+            console.log('Dealer Cards')
+            let output=`${state.dealerCards[0].number}${state.dealerCards[0].emoji} x?`
+            console.log(output)
+        },
+        showDealerCards:(state)=>{
+            console.log('Dealer Cards')
+            let output=''
+            state.dealerCards?.forEach(card=>{
+                output+=`${card.number}${card.emoji} `
+            })
+            console.log(output)
+        },
+        getPlayerPoints:(state)=>{
+            state.playerPoints=state.playerCards.reduce((points,item)=>{
+                return points=points+item.value
+            },0)
+        },
+        getDealerPoints:(state)=>{
+            state.dealerPoints=state.dealerCards.reduce((points,item)=>{
+                return points=points+item.value
+            },0)
         },
         //helpers
         getCards:(state)=>{
