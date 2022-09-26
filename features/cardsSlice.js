@@ -5,7 +5,7 @@ const emojis = require('./data/emojis')
  const initialState={
     cards:[
         //spades
-        {number:1,sign:'spades',emoji:emojis.spades,value:1},
+        {number:1,sign:'spades',emoji:emojis.spades,value:11},
         {number:2,sign:'spades',emoji:emojis.spades,value:2},
         {number:3,sign:'spades',emoji:emojis.spades,value:3},
         {number:4,sign:'spades',emoji:emojis.spades,value:4},
@@ -16,7 +16,7 @@ const emojis = require('./data/emojis')
         {number:9,sign:'spades',emoji:emojis.spades,value:9},
         {number:10,sign:'spades',emoji:emojis.spades,value:10},
         //hearts
-        {number:1,sign:'hearts',emoji:emojis.hearts,value:1},
+        {number:1,sign:'hearts',emoji:emojis.hearts,value:11},
         {number:2,sign:'hearts',emoji:emojis.hearts,value:2},
         {number:3,sign:'hearts',emoji:emojis.hearts,value:3},
         {number:4,sign:'hearts',emoji:emojis.hearts,value:4},
@@ -27,7 +27,7 @@ const emojis = require('./data/emojis')
         {number:9,sign:'hearts',emoji:emojis.hearts,value:9},
         {number:10,sign:'hearts',emoji:emojis.hearts,value:10},
         //clubs
-        {number:1,sign:'clubs',emoji:emojis.clubs,value:1},
+        {number:1,sign:'clubs',emoji:emojis.clubs,value:11},
         {number:2,sign:'clubs',emoji:emojis.clubs,value:2},
         {number:3,sign:'clubs',emoji:emojis.clubs,value:3},
         {number:4,sign:'clubs',emoji:emojis.clubs,value:4},
@@ -38,7 +38,7 @@ const emojis = require('./data/emojis')
         {number:9,sign:'clubs',emoji:emojis.clubs,value:9},
         {number:10,sign:'clubs',emoji:emojis.clubs,value:10},
         //diamonds
-        {number:1,sign:'diamonds',emoji:emojis.diamonds,value:1},
+        {number:1,sign:'diamonds',emoji:emojis.diamonds,value:11},
         {number:2,sign:'diamonds',emoji:emojis.diamonds,value:2},
         {number:3,sign:'diamonds',emoji:emojis.diamonds,value:3},
         {number:4,sign:'diamonds',emoji:emojis.diamonds,value:4},
@@ -53,7 +53,11 @@ const emojis = require('./data/emojis')
     dealerCards:[],
     playerPoints:0,
     dealerPoints:0,
+    playerHasAce:false,
+    dealerHasAce:false,
     selectedCard:null,
+    dealerBurnt:false,
+    playerBurnt:false
 }
 
 const cardsSlice= createSlice({
@@ -79,40 +83,40 @@ const cardsSlice= createSlice({
             state.playerCards=[]
             state.dealerCards=[]
         },
-        // showPlayerCards:(state)=>{
-        //     console.log('Your Cards')
-        //     let output=''
-        //     state.playerCards?.forEach(card=>{
-        //         output+=`${card.number}${card.emoji} `
-        //     })
-        //     console.log(output)
-        // },
-        showDealerCardsStart:(state)=>{
-            console.log('Dealer Cards')
-            let output=`${state.dealerCards[0].number}${state.dealerCards[0].emoji} x?`
-            console.log(output)
-        },
-        // showDealerCards:(state)=>{
-        //     console.log('Dealer Cards')
-        //     let output=''
-        //     state.dealerCards?.forEach(card=>{
-        //         output+=`${card.number}${card.emoji} `
-        //     })
-        //     console.log(output)
-        // },
         getPlayerPoints:(state)=>{
             state.playerPoints=state.playerCards.reduce((points,item)=>{
                 return points=points+item.value
             },0)
+            //check if player can be saved by ace
+            if(state.playerPoints>21){
+                state.playerHasAce=state.playerCards.some(card=>card.value==11)
+                if(state.playerHasAce) state.playerPoints=state.playerPoints-10
+            }
         },
         getDealerPoints:(state)=>{
             state.dealerPoints=state.dealerCards.reduce((points,item)=>{
                 return points=points+item.value
             },0)
+            if(state.dealerPoints>21){
+                state.dealerHasAce=state.dealerCards.some(card=>card.value==11)
+                if(state.dealerHasAce) state.dealerPoints=state.dealerPoints-10
+            }
+        },
+        playerHasAce:(state,action)=>{
+            if(action.payload==true) state.playerPoints=state.playerPoints-10
+        },
+        dealerHasAce:(state,action)=>{
+            if(action.payload==true) state.dealerPoints=state.dealerPoints-10
+        },
+        playerBurnt:(state)=>{
+            state.playerBurnt=true
+        },
+        dealerBurnt:(state)=>{
+            state.dealerBurnt=true
         },
         //helpers
         getCards:(state)=>{
-            state.cards.forEach(card=>console.log(card.number,card.sign))
+             state.cards.forEach(card=>console.log(card.number,card.sign))
         },
         getPlayerCards:(state)=>{
             console.log('player cards')
@@ -132,6 +136,7 @@ const cardsSlice= createSlice({
         }
     }
 })
+
 
 module.exports = cardsSlice
 module.exports.cardsReducer = cardsSlice.reducer
