@@ -4,8 +4,7 @@ const cardsActions=require('./features/cardsSlice').actions
 const inquirer=require("inquirer")
 const gameEndStates=require('./features/data/gameEndStates')
 
-const sleep=require('./helpers/sleep')
-const randomChance=require('./helpers/randomChance')
+
 
 const game=async()=>{
     startGame()
@@ -15,11 +14,6 @@ const game=async()=>{
     const checkWin =  doesDealerDrawCard()
     if(!checkWin) return
     checkWinner()
-
-    // if(dealerPlays) {
-    //     const checkWin = 
-    //     if(checkWin) checkWinner()
-    // }
 }
 const startGame=()=>{
     store.dispatch(cardsActions.pickACard())
